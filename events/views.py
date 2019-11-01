@@ -2,16 +2,16 @@ from django.shortcuts import render
 from rest_framework import generics, status, viewsets
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
-from .models import event, reviews
-from .permissions import IsOrganizerOrReadOnly
-from .serializers import (confirmAttendanceSerializer, eventSerializer,
-                          reviewSerializer)
+from .models import Event, Reviews, Attendees
+from .permissions import IsOrganizerOrReadOnly,IsConfirmedOrReadOnly
+from .serializers import (confirmAttendanceSerializer, EventSerializer,
+                          Reviewserializer)
 
 
 # Create your views here.
-class eventListCreateAPIView(viewsets.ModelViewSet):
-    queryset=event.objects.all()
-    serializer_class=eventSerializer
+class EventListCreateAPIView(viewsets.ModelViewSet):
+    queryset=Event.objects.all()
+    serializer_class=EventSerializer
     permission_classes=[IsOrganizerOrReadOnly]
 
     def perform_create(self,serializer):
@@ -19,52 +19,51 @@ class eventListCreateAPIView(viewsets.ModelViewSet):
         if organizer.profile.is_creator:
             serializer.save(organizer=organizer)
         else:
-            raise PermissionDenied("You are not authorized to create events. Update your profile!")
+            raise PermissionDenied("You are not authorized to create Events. Update your profile!")
 
 
     def perform_destroy(self, instance):
-        event_instance=self.get_object()
+        Event_instance=self.get_object()
         user=self.request.user
-        organizer=event_instance.organizer
+        organizer=Event_instance.organizer
 
         if user !=organizer:
-            raise ValidationError("Sorry you are not authorized to delete this event!")
-        event_instance.delete()
+            raise ValidationError("Sorry you are not authorized to delete this Event!")
+        Event_instance.delete()
 
 
 
 class confirmAttendanceAPIView(viewsets.ModelViewSet):
-    queryset=event.objects.all()
+    queryset=Attendees.objects.all()
     serializer_class=confirmAttendanceSerializer
+    permission_classes=[IsConfirmedOrReadOnly]
+
+    def perform_create(self,serializer):
+        print(self.request.data['event'])
+        attendance_queryset=Attendees.objects.filter(event=self.request.data['event'],
+        user=self.request.user)
+
+        if attendance_queryset.exists() :
+            raise ValidationError('you already booked this event.')
+        serializer.save(user=self.request.user)
+
+
+class ReviewserializerAPIView(generics.ListCreateAPIView):
+    queryset=Reviews.objects.all()
+    serializer_class=Reviewserializer
 
     def perform_create(self, serializer):
-        event_pk=self.kwargs.get("pk")
-        event_=generics.get_object_or_404(event,pk=event_pk)
-        attendee=self.request.user
-        attendee_queryset=reviews.objects.filter(event=event_,attendees=attendee)
-
-        if attendee_queryset.exists():
-            raise ValidationError("You already booked attendance for this event.")
-        event_.objects.add(attendee)
-        
-
-class reviewSerializerAPIView(generics.ListCreateAPIView):
-    queryset=reviews.objects.all()
-    serializer_class=reviewSerializer
-
-    
-    def perform_create(self, serializer):
-        event_pk=self.kwargs.get("event_pk")
-        event_instance=generics.get_object_or_404(event,pk=event_pk)
+        Event_pk=self.kwargs.get("Event_pk")
+        Event_instance=generics.get_object_or_404(Event,pk=Event_pk)
         reviewer=self.request.user
 
-        review_queryset=reviews.objects.filter(event=event_instance,reviewer=reviewer)
+        review_queryset=Reviews.objects.filter(Event=Event_instance,reviewer=reviewer)
 
         if review_queryset.exists():
             raise ValidationError("oops you already made a review!,Try editing your previous review")
-        serializer.save(event=event_instance,reviewer=reviewer)
+        serializer.save(Event=Event_instance,reviewer=reviewer)
 
 
-class reviewSerializerDetailView(viewsets.ModelViewSet):
-    queryset=reviews.objects.all()
-    serializer_class=reviewSerializer
+class ReviewserializerDetailView(viewsets.ModelViewSet):
+    queryset=Reviews.objects.all()
+    serializer_class=Reviewserializer

@@ -1,31 +1,31 @@
 from rest_framework import serializers
-from .models import event,reviews
+from .models import Event,Reviews, Attendees
 
-# serialize the events model
-class eventSerializer(serializers.ModelSerializer):
+# serialize the Events model
+class EventSerializer(serializers.ModelSerializer):
     event= serializers.StringRelatedField(read_only=True,many=True)
     organizer = serializers.StringRelatedField(read_only=True)
     attendees = serializers.StringRelatedField(read_only=True,many=True)
     attendee_count=serializers.SerializerMethodField()
     class Meta:
-        model=event
+        model=Event
         fields='__all__'
 
     def get_attendee_count(self,object):
         return object.attendees.count()
 
 class confirmAttendanceSerializer(serializers.ModelSerializer):
-    organizer = serializers.StringRelatedField(read_only=True)
-    attendees=serializers.StringRelatedField(many=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    # event=serializers.StringRelatedField()
     class Meta:
-        model=event
-        fields=('id','attendees','organizer',)
+        model=Attendees
+        fields='__all__'
+    
 
-class reviewSerializer(serializers.ModelSerializer):
+
+class Reviewserializer(serializers.ModelSerializer):
     event=serializers.StringRelatedField(read_only=True)
     reviewer=serializers.StringRelatedField(read_only=True)
     class Meta:
-        model=reviews
+        model=Reviews
         fields='__all__'
-
-
