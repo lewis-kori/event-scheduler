@@ -2,10 +2,10 @@ from django.shortcuts import render
 from rest_framework import generics, status, viewsets
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
-from .models import Event, Reviews, Attendees
-from .permissions import IsOrganizerOrReadOnly,IsConfirmedOrReadOnly
-from .serializers import (confirmAttendanceSerializer, EventSerializer,
-                          Reviewserializer)
+from .models import Attendees, Event, Reviews
+from .permissions import IsConfirmedOrReadOnly, IsOrganizerOrReadOnly
+from .serializers import (EventSerializer, Reviewserializer,
+                          confirmAttendanceSerializer)
 
 
 # Create your views here.
@@ -64,6 +64,7 @@ class ReviewserializerAPIView(generics.ListCreateAPIView):
         serializer.save(Event=Event_instance,reviewer=reviewer)
 
 
-class ReviewserializerDetailView(viewsets.ModelViewSet):
+class ReviewserializerDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset=Reviews.objects.all()
     serializer_class=Reviewserializer
+    permisssion_class=[IsConfirmedOrReadOnly]

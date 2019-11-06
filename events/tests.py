@@ -16,12 +16,6 @@ class eventTestCase(userProfileTestCase):
     # def api_authentication(self):
     #     self.client.credentials(HTTP_AUTHORIZATION='Bearer '+self.token)
 
-    # def test_userprofile_profile(self):
-    #     profile_data={'description':'I am a very famous game character','location':'nintendo world','is_creator':'True',}
-    #     response=self.client.put(reverse('profile',kwargs={'pk':1}),data=profile_data)
-    #     print(response.data)
-    #     self.assertEqual(response.status_code,status.HTTP_200_OK)
-
 
     def test_create_event(self):
         event_data={'name':'good life','description':'happy times','location':'kenya',}
