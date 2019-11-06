@@ -6,7 +6,7 @@ from .views import (confirmAttendanceAPIView, EventListCreateAPIView,
 
 router=DefaultRouter()
 router.register("all-events",EventListCreateAPIView,base_name='all-events')
-router.register("reviews",ReviewserializerDetailView,base_name="reviews")
+# router.register("reviews",ReviewserializerDetailView,base_name="reviews")
 router.register("confirm-attendance",confirmAttendanceAPIView)
 
 
