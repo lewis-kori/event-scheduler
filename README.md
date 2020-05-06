@@ -6,7 +6,7 @@ The code there is much cleaner and conforms to PEP standards(unfortunately I rea
 
 If you are interested in viewing that project. I'll link the repos below.
 It's a gym session scheduling application. It's utilizing google calendar API for ICS file generation and reminders.
-The backend is in django and the backend is built with vuejs(nuxt)
+The backend is in django and the frontend is built with vuejs(nuxt)
 
 ### Frontend
 
