@@ -5,7 +5,8 @@ I've been improving on this concept of event scheduling and started a new projec
 The code there is much cleaner and conforms to PEP standards(unfortunately I realized this one wasn't 😅) but it's still functional.
 
 If you are interested in viewing that project. I'll link the repos below.
-It's a gym session scheduling application. The backend is in django and the backend is built with vuejs(nuxt)
+It's a gym session scheduling application. It's utilizing google calendar API for ICS file generation and reminders.
+The backend is in django and the backend is built with vuejs(nuxt)
 
 ### Frontend
 
