@@ -1,5 +1,5 @@
 Django==2.2.8
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 djangorestframework-simplejwt==4.3.0
 djoser==2.0.3
 Pillow==6.2.0
